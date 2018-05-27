@@ -1,21 +1,167 @@
-VK.init({
-    apiId: 6488367
-});
+import './foundation.js';
+import './foundation.css';
+import './img/plus.svg';
 
-function auth() {
-    return new Promise((resolve, reject) => {
-        VK.Auth.login(data => {
-            if (data.session) {
-                resolve();
-            } else {
-                reject(new Error('Не удалось авторизоваться'));
-            }
-        }, 6);
+const vkModule = require('./js/vk');
+const filter = require('./js/filter');
+const friendTemplate = require('./friend-template.hbs');
+
+const initialZone = document.querySelector('#initial-zone');
+const filteredZone = document.querySelector('#filtered-zone');
+const initialList = document.querySelector('#initial-list');
+const filteredList = document.querySelector('#filtered-list');
+const zoneWrapper = document.querySelector('#zone-wrapper');
+const saveButton = document.querySelector('#save-button');
+const initialInput = document.querySelector('#initial-input');
+const filteredInput = document.querySelector('#filtered-input');
+const hiddenItemClass = 'c-friends__item_hidden';
+
+let vkFriends;
+let friends;
+let filteredFriends;
+let currentDrag;
+
+filter.load();
+
+(async() => {
+    try {
+        const getVkFriends = await vkModule.friends();
+
+        vkFriends = getVkFriends.items;
+
+        renderLists();
+
+        zoneWrapper.addEventListener('click', moveHandler);
+        saveButton.addEventListener('click', saveHandler);
+
+        filteredInput.addEventListener('keyup', refreshList);
+        initialInput.addEventListener('keyup', refreshList);
+
+    }
+    catch (e) {
+        console.error(e);
+    }
+})();
+
+function moveHandler(e) {
+    e.preventDefault();
+    const target = e.target;
+
+    if (!target.classList.contains('c-friends__button')) {
+        return;
+    }
+
+    const zone = target.closest('.c-friends-zone');
+
+    if (!zone) {
+        return;
+    }
+    if (zone === initialZone) {
+        moveFriend(target, 'initial');
+    } else if (zone === filteredZone) {
+        moveFriend(target, 'filtered');
+    }
+}
+
+function saveHandler(e) {
+    localStorage.filteredUsers = JSON.stringify(filter.ids());
+    console.dir(filter.ids);
+    console.dir(localStorage.filteredUsers);
+}
+
+function moveFriend(link, from) {
+    const node = link.closest('[data-user]');
+    filter.move(node.dataset.user, from);
+    if (from === 'initial') {
+        filteredList.appendChild(node);
+    } else {
+        initialList.appendChild(node);
+    }
+    //renderLists();
+}
+
+function renderLists() {
+    let html = friendTemplate({
+        friends: vkFriends.filter(filter.isInitial)
+    });
+
+    initialList.innerHTML = html;
+
+    html = friendTemplate({
+        friends: vkFriends.filter(filter.isFiltered)
+    });
+
+    filteredList.innerHTML = html;
+}
+
+
+function refreshList(e) {
+    const target = e.target;
+    let list = null;
+
+    if (target === initialInput) {
+        list = initialList;
+    } else if (target === filteredInput) {
+        list = filteredList;
+    } else {
+        return;
+    }
+
+    const chunk = target.value;
+    const children = [...list.children];
+
+    children.forEach(item => {
+        const userId = item.dataset.user;
+        const user = vkFriends.find(u => u.id == userId);
+
+        if (filter.isMatching(user, chunk) || chunk === '') {
+            item.classList.remove(hiddenItemClass);
+        } else {
+            item.classList.add(hiddenItemClass);
+        }
     });
 }
 
-auth().then(() => console.log('ok'));
+document.addEventListener('dragstart', (e) => {
+    const node = e.target;
+    if (!node.classList.contains('c-friends__item')) {
+        return;
+    }
+    const zone = getCurrentZone(node);
 
+    if (zone) {
+        currentDrag = {startZone: zone, node: node};
+    }
+});
+
+document.addEventListener('dragover', (e) => {
+    e.preventDefault();
+});
+
+document.addEventListener('drop', (e) => {
+    if (!currentDrag) {
+        return;
+    }
+    e.preventDefault();
+
+    const zone = getCurrentZone(e.target);
+
+    if (!zone || currentDrag.startZone === zone) {
+        return;
+    }
+    const subElement = currentDrag.node.firstElementChild;
+
+    if (currentDrag.startZone === initialList) {
+        moveFriend(subElement, 'initial');
+    } else if (currentDrag.startZone === filteredList) {
+        moveFriend(subElement, 'filtered');
+    }
+    currentDrag = null;
+});
+
+
+const getCurrentZone = node =>
+    node.closest('.c-friends__list');
 
 // let counter = 0;
 // let currentDrag;
@@ -107,12 +253,3 @@ auth().then(() => console.log('ok'));
 //     return newDiv;
 // }
 //
-// function getCurrentZone(from) {
-//     do {
-//         if (from.classList.contains('drop-zone')) {
-//             return from;
-//         }
-//     } while (from = from.parentElement);
-//
-//     return null;
-// }

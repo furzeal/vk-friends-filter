@@ -1,0 +1,233 @@
+<style>
+    li {
+        list-style: none;
+    }
+
+    ul {
+        padding: 0;
+        margin: 0;
+    }
+
+    .l-container {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+        background-color: #999999;
+        justify-content: center;
+        justify-items: center;
+    }
+
+    .l-dialog {
+        display: flex;
+        flex-direction: column;
+        width: 60vw;
+        height: 80vh;
+        margin: auto;
+        border-radius: 12px;
+        background-color: #FFFFFF;
+        overflow: hidden;
+    }
+
+    .l-dialog__title-bar {
+        display: flex;
+        align-items: center;
+        padding-left: 12px;
+        font-weight: 600;
+        height: 45px;
+        background-color: #ff8663;
+        color: #FFF;
+    }
+
+    .l-dialog__search-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        background-color: #f0f0f0;
+        height: 45px;
+    }
+
+    .c-input-wrapper {
+        flex: 1;
+        overflow: hidden;
+        border-radius: 12px;
+        font-size: 14px;
+        margin: 10px;
+    }
+
+    .c-input {
+        width: 100%;
+        border: none;
+        outline: none;
+        height: 24px;
+        padding-left: 10px;
+        border-radius: 12px;
+    }
+
+    .l-zone-wrapper {
+        display: flex;
+        height: auto;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .c-friends-zone {
+        flex: 1;
+        padding: 15px 0px 15px 15px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .c-friends-zone__title {
+        margin: 5px 0;
+    }
+
+    .c-friends__list {
+        display: block;
+        height: 100%;
+        overflow: auto;
+        flex-flow: wrap;
+        align-items: flex-start;
+    }
+
+    .c-friends__item {
+        display: flex;
+        width: 100%;
+        padding: 5px 0;
+        height: 46px;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .c-friends__item_hidden {
+        display: none;
+    }
+
+    .c-friends__item:hover {
+        background-color: #f0f0f0;
+    }
+
+    .c-friends__img-wrapper {
+        height: 44px;
+        width: 44px;
+        margin-left: 8px;
+        border-radius: 22px;
+        overflow: hidden;
+    }
+
+    .c-friends__img {
+        height: 100%;
+        width: 100%;
+    }
+
+    .c-friends__name {
+        margin-left: 15px;
+    }
+
+    .c-friends__button {
+        margin-left: auto;
+        padding: 15px 15px 15px 30px;
+        text-decoration: none;
+        font-size: 30px;
+        color: #AAAAAA;
+    }
+
+    .l-dialog__submit-bar {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height: 45px;
+        background-color: #f0f0f0;
+        width: 100%;
+    }
+
+    .c-button {
+        text-decoration: none;
+        padding: 8px 15px;
+        margin-right: 10px;
+        background-color: #ff8663;
+        color: #FFF;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    /* Let's get this party started */
+    ::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+        background: rgba(250, 250, 250, 0.8);
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb:window-inactive {
+        background: rgba(250, 250, 250, 0.4);
+    }
+
+</style>
+<div class="l-dialog">
+    <div class="l-dialog__title-bar">Выберите друзей</div>
+    <div class="l-dialog__search-bar">
+        <div class="c-input-wrapper">
+            <input class="c-input" id="initial-input" type="text" placeholder="Начните вводить имя друга"
+                   name="left-filter-input">
+        </div>
+        <div class="c-input-wrapper">
+            <input class="c-input" id="filtered-input" type="text" placeholder="Название" name="right-filter-input">
+        </div>
+    </div>
+    <div class="l-zone-wrapper" id="zone-wrapper">
+        <div class="c-friends-zone c-friends-zone_initial" id="initial-zone">
+            <div class="c-friends-zone__title">Ваши друзья</div>
+            <ul class="c-friends__list" id="initial-list">
+                <!--<li class="c-friends__item">-->
+                <!--<div class="c-friends__img-wrapper">-->
+                <!--<img class="c-friends__img" src="./src/img/template.jpg" alt="">-->
+                <!--</div>-->
+                <!--<span class="c-friends__name">Николай Петров</span>-->
+                <!--<a href="#" class="c-friends__button c-friends__button_move">x</a>-->
+                <!--</li>-->
+                <!--<li class="c-friends__item">-->
+                <!--<div class="c-friends__img-wrapper">-->
+                <!--<img class="c-friends__img" src="./src/img/template.jpg" alt="">-->
+                <!--</div>-->
+                <!--<span class="c-friends__name">Николай Петров</span>-->
+                <!--<a href="#" class="c-friends__button c-friends__button_move">x</a>-->
+                <!--</li>-->
+                <!--<li class="c-friends__item">-->
+                <!--<div class="c-friends__img-wrapper">-->
+                <!--<img class="c-friends__img" src="./src/img/template.jpg" alt="">-->
+                <!--</div>-->
+                <!--<span class="c-friends__name">Николай Петров</span>-->
+                <!--<a href="#" class="c-friends__button c-friends__button_move">x</a>-->
+                <!--</li>-->
+                <!--<li class="c-friends__item">-->
+                <!--<div class="c-friends__img-wrapper">-->
+                <!--<img class="c-friends__img" src="./src/img/template.jpg" alt="">-->
+                <!--</div>-->
+                <!--<span class="c-friends__name">Николай Петров</span>-->
+                <!--<a href="#" class="c-friends__button c-friends__button_move">x</a>-->
+                <!--</li>-->
+            </ul>
+        </div>
+        <div class="c-friends-zone c-friends-zone_filtered" id="filtered-zone">
+            <div class="c-friends-zone__title">Друзья в списке</div>
+            <ul class="c-friends__list" id="filtered-list">
+
+            </ul>
+        </div>
+    </div>
+    <div class="l-dialog__submit-bar">
+        <a href="#" class="c-button" id="save-button">Сохранить</a>
+    </div>
+</div>
