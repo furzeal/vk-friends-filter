@@ -1,7 +1,7 @@
 import './foundation.js';
 import './foundation.css';
-import './img/plus.svg';
 
+const plus = require('./img/plus.svg');
 const vkModule = require('./js/vk');
 const filter = require('./js/filter');
 const friendTemplate = require('./friend-template.hbs');
@@ -82,13 +82,15 @@ function moveFriend(link, from) {
 
 function renderLists() {
     let html = friendTemplate({
-        friends: vkFriends.filter(filter.isInitial)
+        friends: vkFriends.filter(filter.isInitial),
+        plus: plus,
     });
 
     initialList.innerHTML = html;
 
     html = friendTemplate({
-        friends: vkFriends.filter(filter.isFiltered)
+        friends: vkFriends.filter(filter.isFiltered),
+        plus: plus,
     });
 
     filteredList.innerHTML = html;
